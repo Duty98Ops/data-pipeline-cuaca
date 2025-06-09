@@ -1,9 +1,10 @@
+import os
 import requests
 import psycopg2
 from datetime import datetime, timezone
 
-API_KEY = "d8c002434a617d91031beec1007c8bde"
-DB_CONNECTION = "postgres://postgres:mCz%40saG8%40V7wBEM@db.mjjyjnnnyhmjeefhnsan.supabase.co:5432/postgres"
+API_KEY = os.getenv("API_KEY")
+DB_CONNECTION = os.getenv("DB_CONNECTION")
 
 cities = ["Jakarta", "Bandung", "Surabaya", "Medan", "Bali"]
 
@@ -16,35 +17,32 @@ def get_weather_data(city):
         print(f"Error fetching data for {city}: {data.get('message')}")
         return None
 
-    weather = {
+    return {
         "city": city,
         "date": datetime.fromtimestamp(data["dt"], timezone.utc).date(),
         "temperature": data["main"]["temp"],
         "humidity": data["main"]["humidity"]
     }
-    return weather
 
 def save_to_db(weather):
     conn = psycopg2.connect(DB_CONNECTION)
     cursor = conn.cursor()
-
     insert_query = """
         INSERT INTO weather_data (city, date, temperature, humidity)
         VALUES (%s, %s, %s, %s)
         ON CONFLICT (city, date) DO NOTHING;
     """
-
     cursor.execute(insert_query, (weather["city"], weather["date"], weather["temperature"], weather["humidity"]))
     conn.commit()
     cursor.close()
     conn.close()
-    print(f"Saved data for {weather['city']} on {weather['date']}")
+    print(f"Saved: {weather['city']} on {weather['date']}")
 
 def main():
     for city in cities:
-        weather = get_weather_data(city)
-        if weather:
-            save_to_db(weather)
+        data = get_weather_data(city)
+        if data:
+            save_to_db(data)
 
 if __name__ == "__main__":
     main()

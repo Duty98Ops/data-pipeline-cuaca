@@ -1,0 +1,31 @@
+name: Run Weather Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Setiap hari jam 00:00 UTC
+  workflow_dispatch:      # Bisa dijalankan manual juga
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests psycopg2-binary
+
+    - name: Run pipeline
+      env:
+        API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        DB_CONNECTION: ${{ secrets.SUPABASE_DB_CONNECTION }}
+      run: |
+        python main.py
