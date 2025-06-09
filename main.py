@@ -9,7 +9,6 @@ load_dotenv()  # ini hanya untuk running lokal, aman di Actions
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 DB_CONNECTION = os.getenv("SUPABASE_DB_CONNECTION")
 
-
 cities = ["Jakarta", "Bandung", "Surabaya", "Medan", "Bali"]
 
 def get_weather_data(city):
