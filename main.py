@@ -4,7 +4,7 @@ import psycopg2
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
-load_dotenv()  # ini hanya untuk running lokal, aman di Actions
+load_dotenv()
 
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 DB_CONNECTION = os.getenv("SUPABASE_DB_CONNECTION")
@@ -21,15 +21,31 @@ def get_weather_data(city):
         if response.status_code != 200:
             raise ValueError(f"[ERROR] API Error for {city}: {data.get('message')}")
 
+        temperature = f"{data['main']['temp']:.2f} C"   # tambahkan satuan °C
+        humidity = f"{data['main']['humidity']} %"      # tambahkan satuan %
+
         return {
             "city": city,
-            "date": datetime.fromtimestamp(data["dt"], timezone.utc).date(),
-            "temperature": data["main"]["temp"],
-            "humidity": data["main"]["humidity"]
+            "date": datetime.now(timezone.utc).date(),
+            "temperature": temperature,
+            "humidity": humidity
         }
     except Exception as e:
         print(f"[ERROR] Failed to fetch data for {city}: {e}")
         return None
+
+def delete_old_data(before_date):
+    try:
+        conn = psycopg2.connect(DB_CONNECTION)
+        cursor = conn.cursor()
+        delete_query = "DELETE FROM weather_data WHERE date < %s"
+        cursor.execute(delete_query, (before_date,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print(f"[INFO] Old data before {before_date} deleted.")
+    except Exception as e:
+        print(f"[ERROR] Failed to delete old data: {e}")
 
 def save_to_db(weather):
     try:
@@ -38,7 +54,9 @@ def save_to_db(weather):
         insert_query = """
             INSERT INTO weather_data (city, date, temperature, humidity)
             VALUES (%s, %s, %s, %s)
-            ON CONFLICT (city, date) DO NOTHING;
+            ON CONFLICT (city, date) DO UPDATE 
+              SET temperature = EXCLUDED.temperature,
+                  humidity = EXCLUDED.humidity;
         """
         cursor.execute(insert_query, (weather["city"], weather["date"], weather["temperature"], weather["humidity"]))
         conn.commit()
@@ -49,6 +67,10 @@ def save_to_db(weather):
         print(f"[ERROR] Failed to save data for {weather['city']}: {e}")
 
 def main():
+    today = datetime.now(timezone.utc).date()
+    # Hapus semua data sebelum hari ini supaya bersih
+    delete_old_data(today)
+
     for city in cities:
         data = get_weather_data(city)
         if data:
