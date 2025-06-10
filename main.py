@@ -21,8 +21,9 @@ def get_weather_data(city):
         if response.status_code != 200:
             raise ValueError(f"[ERROR] API Error for {city}: {data.get('message')}")
 
-        temperature = f"{data['main']['temp']:.2f} C"   # tambahkan satuan °C
-        humidity = f"{data['main']['humidity']} %"      # tambahkan satuan %
+        # Format temperature and humidity with units
+        temperature = f"{data['main']['temp']:.2f} C"   # Tambahkan satuan °C
+        humidity = f"{data['main']['humidity']} %"      # Tambahkan satuan %
 
         return {
             "city": city,
@@ -67,10 +68,13 @@ def save_to_db(weather):
         print(f"[ERROR] Failed to save data for {weather['city']}: {e}")
 
 def main():
+    # Mendapatkan tanggal hari ini
     today = datetime.now(timezone.utc).date()
-    # Hapus semua data sebelum hari ini supaya bersih
-    delete_old_data(today)
 
+    # Hapus data lama sebelum hari ini jika diinginkan, jika tidak, bisa di-comment baris ini
+    # delete_old_data(today)
+
+    # Ambil data cuaca untuk setiap kota dan simpan ke database
     for city in cities:
         data = get_weather_data(city)
         if data:
