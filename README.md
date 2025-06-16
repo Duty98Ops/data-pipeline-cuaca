@@ -1,5 +1,3 @@
-Berikut contoh README.md lengkap dan profesional untuk project Weather Data Pipeline kamu:
-
 ````markdown
 # Weather Data Pipeline Automation
 
