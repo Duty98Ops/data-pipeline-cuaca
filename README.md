@@ -1,58 +1,56 @@
-````markdown
 # Weather Data Pipeline Automation
 
-Automated pipeline to fetch, clean, and store daily weather data from OpenWeatherMap API for multiple Indonesian cities, with data saved in a cloud PostgreSQL database (Supabase). The pipeline runs automatically every day using GitHub Actions for seamless hands-free updates.
+An automated data pipeline that retrieves, processes, and stores daily weather information for key Indonesian cities using the OpenWeatherMap API. The data is securely saved in a cloud PostgreSQL database hosted on Supabase. The entire process is fully automated via GitHub Actions, ensuring reliable, hands-off daily updates.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-- Fetches current weather data for Jakarta, Bandung, Surabaya, Medan, and Bali.
-- Cleans and formats temperature (°C) and humidity (%) data.
-- Stores data in Supabase PostgreSQL with unique constraints to prevent duplicates.
-- Scheduled daily automation via GitHub Actions.
-- Supports local manual run for testing or debugging.
+- **Multi-city data fetching:** Retrieves up-to-date weather info for Jakarta, Bandung, Surabaya, Medan, and Bali.  
+- **Data cleaning & formatting:** Standardizes temperature (°C) and humidity (%) values for consistency.  
+- **Reliable storage:** Inserts data into Supabase PostgreSQL with conflict handling to avoid duplicates.  
+- **Automated scheduling:** Runs daily via GitHub Actions for seamless, maintenance-free operation.  
+- **Local execution:** Supports manual runs locally to facilitate testing and debugging.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-- Python (requests, psycopg2, python-dotenv)
-- OpenWeatherMap API
-- PostgreSQL (Supabase)
-- GitHub Actions (CI/CD Automation)
+- Python: requests, psycopg2, python-dotenv  
+- API: OpenWeatherMap  
+- Database: PostgreSQL (hosted on Supabase)  
+- Automation: GitHub Actions (CI/CD)
 
 ---
 
 ## 🔧 Setup & Installation
 
-1. **Clone the repository**
+1. **Clone the repository:**
 
-```bash
-git clone https://github.com/Duty98Ops/data-pipeline-cuaca.git
-cd data-pipeline-cuaca
-````
+    ```bash
+    git clone https://github.com/Duty98Ops/data-pipeline-cuaca.git
+    cd data-pipeline-cuaca
+    ```
 
-2. **Create and activate Python virtual environment**
+2. **Create and activate a Python virtual environment:**
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+    ```bash
+    python -m venv venv
+    source venv/bin/activate   # On Windows: venv\Scripts\activate
+    ```
 
-3. **Install dependencies**
+3. **Install dependencies:**
 
-```bash
-pip install -r requirements.txt
-```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-4. **Create `.env` file in project root with your credentials**
+4. **Create `.env` file in the project root with your credentials:**
 
-```
-OPENWEATHER_API_KEY=your_openweathermap_api_key_here
-SUPABASE_DB_CONNECTION=your_supabase_db_connection_string_here
-```
-
+    ```
+    OPENWEATHER_API_KEY=your_openweathermap_api_key_here
+    SUPABASE_DB_CONNECTION=your_supabase_db_connection_string_here
+    ```
 ---
 
 ## ⚙️ Usage
